@@ -43,9 +43,11 @@ group :development, :test do
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3'
 
-  # Testing
+  # Error handling
   gem 'better_errors'
   gem 'binding_of_caller'
+
+  # Testing
   gem 'pry-rails'
   gem 'rspec-rails'
   gem 'factory_girl_rails'
