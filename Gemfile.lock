@@ -193,7 +193,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_shipping
+  active_shipping (~> 1.4.3)
   better_errors
   binding_of_caller
   byebug
