@@ -9,15 +9,15 @@ class ApplicationController < ActionController::Base
   def prepare(merchant, buyer, parcels)
     origin = ActiveShipping::Location.new(
       :country => 'US',
-      :state => merchant[:state]
-      :city => merchant[:city]
+      :state => merchant[:state],
+      :city => merchant[:city],
       :zip => merchant[:zip]
     )
 
     destination = ActiveShipping::Location.new(
       :country => 'US',
-      :state => buyer[:shipping_state]
-      :city => buyer[:shipping_city]
+      :state => buyer[:shipping_state],
+      :city => buyer[:shipping_city],
       :zip => buyer[:shipping_zip]
     )
 
@@ -33,17 +33,6 @@ class ApplicationController < ActionController::Base
       )
 
       packages << package
-
-      # for our records
-      parcel = Package.new(
-        name: parcel.name,
-        merchant_id: merchant.id,
-        product_id: parcel.id,
-        buyer_id: buyer.id,
-        request_id:
-      )
-
-      our_record << parcel
     end
 
     # for our records
