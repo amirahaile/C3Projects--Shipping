@@ -11,17 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150819181023) do
-
-  create_table "packages", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "merchant_id"
-    t.integer  "product_id"
-    t.integer  "buyer_id"
-    t.integer  "request_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-  end
+ActiveRecord::Schema.define(version: 20150819181010) do
 
   create_table "requests", force: :cascade do |t|
     t.string   "origin"
@@ -35,15 +25,6 @@ ActiveRecord::Schema.define(version: 20150819181023) do
     t.integer  "request_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "services", force: :cascade do |t|
-    t.string   "name",        null: false
-    t.integer  "rate",        null: false
-    t.string   "tracking_no"
-    t.integer  "response_id", null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
   end
 
 end

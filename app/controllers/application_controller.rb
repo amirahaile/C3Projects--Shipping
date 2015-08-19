@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
         [parcel.width, parcel.height, parcel.length],
         :units => :imperial
       )
-      
+
       packages << package
 
       # for our records
@@ -46,11 +46,13 @@ class ApplicationController < ActionController::Base
       our_record << parcel
     end
 
+    # for our records
+    request = Request.new(origin, destination)
+    parcel.each do |parcel|
+      request.packages << parcel
+    end
 
-    # request = Request.new(origin, destination)
-    # request << parcel.each {}
-
-    # redirect to request_path(origin, destination, packages)
+    redirect_to request_path(origin, destination, packages)
   end
 
   def request(origin, destination, packages)
