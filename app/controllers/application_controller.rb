@@ -40,7 +40,8 @@ class ApplicationController < ActionController::Base
       packages << package
     end
 
-    services = USPS.find_rates(origin, destination, packages)
+    response = USPS.find_rates(origin, destination, packages)
+    services = response.rates.sort_by(&:price).collect {|rate| [rate.service_name, rate.price]}
     # # for our records
     # # Request.new(origin: origin.to_s, destination: destination.to_s)
     render json: services
