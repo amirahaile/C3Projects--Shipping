@@ -49,27 +49,32 @@ class ApplicationController < ActionController::Base
 
     if shipper == 'usps'
       response = USPS.find_rates(origin, destination, packages)
-    elsif shipper = 'ups'
+      delivery = nil # USPS API doesn't offer delivery information
+    elsif shipper == 'ups'
       response = UPS.find_rates(origin, destination, packages)
+      delivery = response.params["RatedShipment"].map { |package| [package["GuaranteedDaysToDelivery"], package["ScheduledDeliveryTime"]] }
     end
 
     services = response.rates.sort_by(&:price).collect {|rate| [rate.service_name, rate.price]}
-    delivery = response.params["RatedShipment"].map { |package| [package["GuaranteedDaysToDelivery"], package["ScheduledDeliveryTime"]] }
-    binding.pry
-    # # for our records
-    # # Request.new(origin: origin.to_s, destination: destination.to_s)
-    render json: services
-    # request_info
-  end
 
-  def request_info
-  #   # Error: 'undefined method `content_mime_type' for nil:NilClass'
-  #   # make the HTTP request
+    # for our records
+    req = Request.create(
+      origin: origin.to_s,
+      destination: destination.to_s,
+      shipper: params[:shipper]
+    )
+    res = Response.create
+    res.update(request_id: req.id) # create association between request & response
+
+    services.each_with_index do |service, index|
+      res.services << Service.create(
+        name: service[0],
+        rate: service[1],
+        delivery_days: delivery.nil? ? nil : delivery[index][0],
+        delivery_time: delivery.nil? ? nil : delivery[index][1]
+      )
+    end
+
+    render json: { services: services, delivery: delivery }.to_json
   end
-  #
-  # def parse
-  #   # parse the response
-  #   # return parsed response
-  #   # render json: blahblah
-  # end
 end
