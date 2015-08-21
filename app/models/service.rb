@@ -1,5 +1,4 @@
-class Response < ActiveRecord::Base
+class Service < ActiveRecord::Base
 # Associations -----------------------------------------------------------------
-  belongs_to :request
-  has_many   :services
+  belongs_to :response
 end
