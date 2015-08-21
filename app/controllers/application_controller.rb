@@ -7,10 +7,17 @@ class ApplicationController < ActionController::Base
 
   # shippers
   USPS = ActiveShipping::USPS.new(:login => ENV["ACTIVESHIPPING_USPS_LOGIN"])
+  UPS = ActiveShipping::UPS.new(
+    :login => ENV['ACTIVESHIPPING_UPS_LOGIN'],
+    :password => ENV['ACTIVESHIPPING_UPS_PASSWORD'],
+    :key => ENV['ACTIVESHIPPING_UPS_KEY'],
+    :origin_name => ENV['ACTIVESHIPPING_UPS_ORIGIN_NAME'],
+    :origin_account => ENV['ACTIVESHIPPING_UPS_ORIGIN_ACCOUNT']
+  )
 
-  # TODO: Add :shipper
   def prepare
     info = JSON.parse(request.body.read)
+    shipper = info["shipper"]
     merchant = info["merchant"]
     buyer = info["buyer"]
     products = info["products"] # hash with number keys
@@ -40,8 +47,15 @@ class ApplicationController < ActionController::Base
       packages << package
     end
 
-    response = USPS.find_rates(origin, destination, packages)
+    if shipper == 'usps'
+      response = USPS.find_rates(origin, destination, packages)
+    elsif shipper = 'ups'
+      response = UPS.find_rates(origin, destination, packages)
+    end
+
     services = response.rates.sort_by(&:price).collect {|rate| [rate.service_name, rate.price]}
+    delivery = response.params["RatedShipment"].map { |package| [package["GuaranteedDaysToDelivery"], package["ScheduledDeliveryTime"]] }
+    binding.pry
     # # for our records
     # # Request.new(origin: origin.to_s, destination: destination.to_s)
     render json: services
